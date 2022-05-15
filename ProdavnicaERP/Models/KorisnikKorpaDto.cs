@@ -17,7 +17,6 @@ namespace ProdavnicaERP.Models
         public string BrUliceKorisnika { get; set; }
         public decimal? PostanskiBroj { get; set; }
         public string Pol { get; set; }
-        public string KorisnickoIme { get; set; }
-        public string Lozinka { get; set; }
+
     }
 }

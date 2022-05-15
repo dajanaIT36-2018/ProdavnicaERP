@@ -46,6 +46,10 @@ namespace ProdavnicaERP.Data
         {
             context.Korisniks.Remove(context.Korisniks.FirstOrDefault(sl => sl.KorisnikId == korisnikID));
         }
+        public Korisnik GetKorisnikByUserNameAndPassword(string korisnickoIme, string lozinka) 
+        {
+            return context.Korisniks.FirstOrDefault(k => k.KorisnickoIme == korisnickoIme & k.Lozinka == lozinka) ;
+        }
     }
 
 }

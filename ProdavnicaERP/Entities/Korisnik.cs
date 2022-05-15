@@ -63,5 +63,8 @@ namespace ProdavnicaERP.Entities
         public virtual ICollection<Korpa> Korpas { get; set; }
         [InverseProperty(nameof(Porudzbina.Korisnik))]
         public virtual ICollection<Porudzbina> Porudzbinas { get; set; }
+
+        [NotMapped]
+        public string Rola { get; set; }
     }
 }

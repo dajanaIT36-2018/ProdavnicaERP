@@ -11,8 +11,11 @@ namespace ProdavnicaERP.Data
         List<Korisnik> GetKorisnik();
 
         Korisnik GetKorisnikById(int korisnikID);
+        Korisnik GetKorisnikByUserNameAndPassword(string korisnickoIme, string lozinka);
 
         Korisnik CreateKorisnik(Korisnik korisnik);
+
+
 
         void UpdateKorisnik(Korisnik korisnik);
 

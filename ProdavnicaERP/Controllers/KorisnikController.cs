@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -8,6 +9,7 @@ using ProdavnicaERP.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace ProdavnicaERP.Controllers
@@ -30,8 +32,10 @@ namespace ProdavnicaERP.Controllers
             this.linkGenerator = linkGenerator;
         }
 
+        
         [HttpGet]
         [HttpHead]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -56,6 +60,7 @@ namespace ProdavnicaERP.Controllers
         }
 
             [HttpGet("{korisnikID}")]
+            [Authorize(Roles = "Admin")]
             [ProducesResponseType(StatusCodes.Status404NotFound)]
             [ProducesResponseType(StatusCodes.Status200OK)]
             [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -73,7 +78,9 @@ namespace ProdavnicaERP.Controllers
             korisnikDto.TipKorisnika = mapper.Map<TipKorisnikaDto>(tipKorisnikaRepository.GetTipKorisnikaById(korisnik.TipKorisnikaId));
             return Ok(mapper.Map<KorisnikDto>(korisnik));
             }
+
             [HttpPost]
+            [Authorize(Roles = "Admin")]
             [Consumes("application/json")]
             [ProducesResponseType(StatusCodes.Status201Created)]
             [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -99,6 +106,7 @@ namespace ProdavnicaERP.Controllers
             }
 
             [HttpDelete("{korisnikID}")]
+            [Authorize(Roles = "Admin")]
             [ProducesResponseType(StatusCodes.Status204NoContent)]
             [ProducesResponseType(StatusCodes.Status404NotFound)]
             [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -123,6 +131,7 @@ namespace ProdavnicaERP.Controllers
             }
         [HttpPut]
         [Consumes("application/json")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -164,5 +173,7 @@ namespace ProdavnicaERP.Controllers
                 Response.Headers.Add("Allow", "GET, POST, PUT, DELETE");
                 return Ok();
             }
+
+      
     }    
 }

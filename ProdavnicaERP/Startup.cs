@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProdavnicaERP.Data;
 using ProdavnicaERP.Entities;
@@ -18,6 +20,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace ProdavnicaERP
@@ -34,6 +37,19 @@ namespace ProdavnicaERP
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options => {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = Configuration["Jwt:Issuer"],
+                        ValidAudience = Configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+                    };
+                });
 
             services.AddControllers(setup =>
                 setup.ReturnHttpNotAcceptable = true
@@ -86,11 +102,7 @@ namespace ProdavnicaERP
                      };
                  };
              });
-
-
-
-
-            //konfiguracije za automaper - za svako mapiranje se definise profil u tom profilu iz tog objekta mi mapiraj taj objekat na takav nacin
+            services.AddRazorPages();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddScoped<IKorisnikRepository, KorisnikRepository >();
@@ -106,32 +118,6 @@ namespace ProdavnicaERP
             services.AddScoped<IVrstaProizvodaRepository, VrstaProizvodaRepository>();
 
 
-            services.AddSwaggerGen(setupAction =>
-            {
-                setupAction.SwaggerDoc("WEBSHOPApiSpecification",
-                    new Microsoft.OpenApi.Models.OpenApiInfo()
-                    {
-                        Title = "WEBSHOP API",
-                        Version = "1",
-                        Description = "Pomoću ovog API-ja može da se vrši dodavanje, modifikacija i brisanje , kao i pregled svih kreiranih javnih nadmetanja.",
-                        Contact = new Microsoft.OpenApi.Models.OpenApiContact
-                        {
-                            Name = "Dajana Jelic",
-                            Email = "dajanajelic05@gmail.com",
-                            Url = new Uri(Configuration["Uri:Ftn"])
-                        },
-                        License = new Microsoft.OpenApi.Models.OpenApiLicense
-                        {
-                            Name = "FTN licence",
-                            Url = new Uri(Configuration["Uri:Ftn"])
-                        },
-                        TermsOfService = new Uri(Configuration["Uri:Ftn"])
-                    });
-                var xmlComments = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";//refleksija
-                //omogucava da manipulisemo sa putanjom
-                var xmlCommentsPath = Path.Combine(AppContext.BaseDirectory, xmlComments);
-                //setupAction.IncludeXmlComments(xmlCommentsPath);
-            });
             services.AddDbContextPool<WEBSHOPContext>(options => options.UseSqlServer(Configuration.GetConnectionString("WEBSHOP")));
         
 
@@ -157,24 +143,14 @@ namespace ProdavnicaERP
             }
 
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
-
-            app.UseSwagger();
-
-            app.UseSwaggerUI(setupAction =>
-            {
-
-                //Podesavamo endpoint gde Swagger UI moze da pronadje OpenAPI specifikaciju
-                setupAction.SwaggerEndpoint("/swagger/WEBSHOPOpenApiSpecification/swagger.json", "WEBSHOP API");
-
-                setupAction.RoutePrefix = "swagger"; //Dokumentacija ce sada biti dostupna na root-u (ne mora da se pise /swagger)
-            });
-
             app.UseEndpoints(endpoints =>
             {
-
                 endpoints.MapControllers();
+                endpoints.MapRazorPages();
             });
         }
     }
