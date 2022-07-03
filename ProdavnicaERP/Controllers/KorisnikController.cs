@@ -35,7 +35,7 @@ namespace ProdavnicaERP.Controllers
         
         [HttpGet]
         [HttpHead]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -80,12 +80,11 @@ namespace ProdavnicaERP.Controllers
             }
 
             [HttpPost]
-            [Authorize(Roles = "Admin")]
             [Consumes("application/json")]
             [ProducesResponseType(StatusCodes.Status201Created)]
             [ProducesResponseType(StatusCodes.Status500InternalServerError)]
             [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-            public ActionResult<KorisnikDto> CreateKorisnik([FromBody] KorisnikDto korisnik)
+            public ActionResult<KorisnikDto> CreateKorisnik([FromBody] KorisnikCreationDto korisnik)
             {
                 try
                 {

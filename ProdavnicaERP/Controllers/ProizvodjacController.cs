@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -30,10 +31,11 @@ namespace ProdavnicaERP.Controllers
 
         [HttpGet]
         [HttpHead]
+        //[Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public ActionResult<List<ProizvodjacDto>> GetProizvodjac()
+        public ActionResult<List<ProizvodjacDto>> GetProizvodjacs()
         {
 
             List<Proizvodjac> proizvodjaci = proizvodjacRepository.GetProizvodjac();
@@ -52,6 +54,7 @@ namespace ProdavnicaERP.Controllers
         }
 
         [HttpGet("{ProizvodjacID}")]
+        //[Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -69,6 +72,7 @@ namespace ProdavnicaERP.Controllers
             return Ok(mapper.Map<ProizvodjacDto>(proizvodjac));
         }
         [HttpPost]
+        //[Authorize(Roles = "Admin")]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -93,6 +97,7 @@ namespace ProdavnicaERP.Controllers
         }
 
         [HttpDelete("{ProizvodjacID}")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -116,6 +121,7 @@ namespace ProdavnicaERP.Controllers
             }
         }
         [HttpPut]
+        //[Authorize(Roles = "Admin")]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]

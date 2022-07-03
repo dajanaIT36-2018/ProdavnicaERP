@@ -17,13 +17,13 @@ namespace ProdavnicaERP.Controllers
     [Produces("application/json", "application/xml")]
     public class VrstaProizvodumController : ControllerBase
     {
-        private readonly IVrstaProizvodaRepository vrstaProizvodaRepository;
+        private readonly IVrstaProizvodaRepository VrstaProizvodaRepository;
         private readonly IMapper mapper;
         private readonly LinkGenerator linkGenerator;
-        public VrstaProizvodumController(IVrstaProizvodaRepository vrstaProizvodaRepository,
+        public VrstaProizvodumController(IVrstaProizvodaRepository VrstaProizvodaRepository,
             IMapper mapper, LinkGenerator linkGenerator)
         {
-            this.vrstaProizvodaRepository = vrstaProizvodaRepository;
+            this.VrstaProizvodaRepository = VrstaProizvodaRepository;
             this.mapper = mapper;
             this.linkGenerator = linkGenerator;
         }
@@ -33,10 +33,10 @@ namespace ProdavnicaERP.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public ActionResult<List<VrstaProizvodumDto>> GetVrstaProizvoda()
+        public ActionResult<List<VrstaProizvodumDto>> GetVrstaProizvodas()
         {
 
-            List<VrstaProizvodum> vrsteProizvoda = vrstaProizvodaRepository.GetVrstaProizvoda();
+            List<VrstaProizvodum> vrsteProizvoda = VrstaProizvodaRepository.GetVrstaProizvoda();
 
             if (vrsteProizvoda == null || vrsteProizvoda.Count == 0)
             {
@@ -47,42 +47,41 @@ namespace ProdavnicaERP.Controllers
             foreach (VrstaProizvodum k in vrsteProizvoda)
             {
 
-                VrstaProizvodumDto vrstaProizvodaDto = mapper.Map<VrstaProizvodumDto>(k);
-                vrsteProizvodaDto.Add(vrstaProizvodaDto);
+                VrstaProizvodumDto VrstaProizvodaDto = mapper.Map<VrstaProizvodumDto>(k);
+                vrsteProizvodaDto.Add(VrstaProizvodaDto);
             }
             return Ok(vrsteProizvodaDto);
 
         }
-
-        [HttpGet("{vrstaProizvodaID}")]
+        [HttpGet("{VrstaProizvodaID}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public ActionResult<VrstaProizvodumDto> GetVrstaProizvoda(int vrstaProizvodaID)
+        public ActionResult<VrstaProizvodumDto> GetVrstaProizvoda(int VrstaProizvodaID)
         {
 
-            VrstaProizvodum vrstaProizvoda = vrstaProizvodaRepository.GetVrstaProizvodaById(vrstaProizvodaID);
+            VrstaProizvodum VrstaProizvoda = VrstaProizvodaRepository.GetVrstaProizvodaById(VrstaProizvodaID);
 
 
-            if (vrstaProizvoda == null)
+            if (VrstaProizvoda == null)
             {
                 return NotFound();
             }
 
-            return Ok(mapper.Map<VrstaProizvodumDto>(vrstaProizvoda));
+            return Ok(mapper.Map<VrstaProizvodumDto>(VrstaProizvoda));
         }
         [HttpPost]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public ActionResult<TipKorisnikaDto> CreateVrstaProizvoda([FromBody] VrstaProizvodumDto vrstaProizvoda)
+        public ActionResult<TipKorisnikaDto> CreateVrstaProizvoda([FromBody] VrstaProizvodumDto VrstaProizvoda)
         {
             try
             {
-                VrstaProizvodum obj = mapper.Map<VrstaProizvodum>(vrstaProizvoda);
-                VrstaProizvodum k = vrstaProizvodaRepository.CreateVrstaProizvoda(obj);
-                vrstaProizvodaRepository.SaveChanges();
+                VrstaProizvodum obj = mapper.Map<VrstaProizvodum>(VrstaProizvoda);
+                VrstaProizvodum k = VrstaProizvodaRepository.CreateVrstaProizvoda(obj);
+                VrstaProizvodaRepository.SaveChanges();
                 string location = linkGenerator.GetPathByAction("GetVrstaProizvoda", "VrstaProizvodum", new { TipKorisnikaID = k.VrstaProizvodaId });
 
 
@@ -91,26 +90,26 @@ namespace ProdavnicaERP.Controllers
             }
             catch
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Create Error");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Uneli ste nepostojecu vrstu proizvoda");
             }
         }
 
-        [HttpDelete("{vrstaProizvodaID}")]
+        [HttpDelete("{VrstaProizvodaID}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public IActionResult DeletevrstaProizvoda(int vrstaProizvodaID)
+        public IActionResult DeleteVrstaProizvoda(int VrstaProizvodaID)
         {
             try
             {
-                VrstaProizvodum vrstaProizvoda = vrstaProizvodaRepository.GetVrstaProizvodaById(vrstaProizvodaID);
-                if (vrstaProizvoda == null)
+                VrstaProizvodum VrstaProizvoda = VrstaProizvodaRepository.GetVrstaProizvodaById(VrstaProizvodaID);
+                if (VrstaProizvoda == null)
                 {
                     return NotFound();
                 }
-                vrstaProizvodaRepository.DeleteVrstaProizvoda(vrstaProizvodaID);
-                vrstaProizvodaRepository.SaveChanges();
+                VrstaProizvodaRepository.DeleteVrstaProizvoda(VrstaProizvodaID);
+                VrstaProizvodaRepository.SaveChanges();
                 return NoContent();
             }
             catch
@@ -124,29 +123,29 @@ namespace ProdavnicaERP.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public ActionResult<VrstaProizvodumDto> UpdateVrstaProizvoda(VrstaProizvodumUpdateDto vrstaProizvoda)
+        public ActionResult<VrstaProizvodumDto> UpdateVrstaProizvoda(VrstaProizvodumUpdateDto VrstaProizvoda)
         {
             try
             {
-                var oldVrstaProizvoda = vrstaProizvodaRepository.GetVrstaProizvodaById(vrstaProizvoda.VrstaProizvodaId);
+                var oldVrstaProizvoda = VrstaProizvodaRepository.GetVrstaProizvodaById(VrstaProizvoda.VrstaProizvodaId);
                 if (oldVrstaProizvoda == null)
                 {
 
                     return NotFound();
                 }
-                VrstaProizvodum vrstaProizvodaEntity = mapper.Map<VrstaProizvodum>(vrstaProizvoda);
-                mapper.Map(vrstaProizvodaEntity, oldVrstaProizvoda); //Update objekta koji treba da sačuvamo u bazi                
+                VrstaProizvodum VrstaProizvodaEntity = mapper.Map<VrstaProizvodum>(VrstaProizvoda);
+                mapper.Map(VrstaProizvodaEntity, oldVrstaProizvoda); //Update objekta koji treba da sačuvamo u bazi                
 
 
-                vrstaProizvodaRepository.SaveChanges(); //Perzistiramo promene
+                VrstaProizvodaRepository.SaveChanges(); //Perzistiramo promene
 
 
-                return Ok(mapper.Map<VrstaProizvodumDto>(vrstaProizvodaEntity));
+                return Ok(mapper.Map<VrstaProizvodumDto>(VrstaProizvodaEntity));
             }
             catch (Exception)
             {
 
-                return StatusCode(StatusCodes.Status500InternalServerError, "Update error");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Uneli ste nepostojecu vrstu proizvoda");
             }
 
 

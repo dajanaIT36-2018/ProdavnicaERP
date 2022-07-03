@@ -8,6 +8,7 @@ namespace ProdavnicaERP.Models
     public class TipProizvodumDto
     {
        
+        public int TipProizvodaId { get; set; }
         public string NazivTipProizvoda { get; set; }
 
       

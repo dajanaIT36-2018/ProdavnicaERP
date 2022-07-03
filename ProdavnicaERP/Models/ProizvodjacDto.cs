@@ -7,6 +7,7 @@ namespace ProdavnicaERP.Models
 {
     public class ProizvodjacDto
     { 
+        public int ProizvodjacId { get; set; }
         public string NazivProizvodjaca { get; set; }
     }
 }

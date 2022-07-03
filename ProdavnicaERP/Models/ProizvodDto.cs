@@ -7,6 +7,7 @@ namespace ProdavnicaERP.Models
 {
     public class ProizvodDto
     {
+        public int ProizvodId { get; set; }
         public int? Velicina { get; set; }
         public decimal Cena { get; set; }
         public int? Kolicina { get; set; }

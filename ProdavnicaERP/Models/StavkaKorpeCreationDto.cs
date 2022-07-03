@@ -11,6 +11,5 @@ namespace ProdavnicaERP.Models
         public int KorpaId { get; set; }
         public int KolicinaStavke { get; set; }
         public int VelicinaStavke { get; set; }
-        public decimal UkupnaCenaStavke { get; set; }
     }
 }

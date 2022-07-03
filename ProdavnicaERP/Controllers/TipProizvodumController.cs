@@ -33,7 +33,7 @@ namespace ProdavnicaERP.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public ActionResult<List<TipProizvodumDto>> GetTipProizvoda()
+        public ActionResult<List<TipProizvodumDto>> GetTipProizvodas()
         {
 
             List<TipProizvodum> tipoviProizvoda = tipProizvodaRepository.GetTipProizvoda();
