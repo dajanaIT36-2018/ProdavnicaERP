@@ -14,6 +14,7 @@ namespace ProdavnicaERP.Controllers
 {
     [ApiController]
     [Route("api/stavkeKorpe")]
+    [Route("api/stavkeKorpe/[action]")]
     [Produces("application/json", "application/xml")]
     public class StavkaKorpeController : ControllerBase
     {
@@ -73,10 +74,12 @@ namespace ProdavnicaERP.Controllers
             }
             return Ok(stavkaKorpiDto);
         }
-        [HttpGet("{stavkaKorpeID}")]
+
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [HttpGet("{stavkaKorpeID}")]
+        [ActionName("stavkaById")]
         public ActionResult<StavkaKorpeDto> GetStavkaKorpe(int stavkaKorpeID)
         {
 
@@ -102,6 +105,7 @@ namespace ProdavnicaERP.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ActionName("create")]
         public ActionResult<StavkaKorpeDto> CreateStavkaKorpe([FromBody] StavkaKorpeCreationDto stavkaKorpe)
         {
             try
@@ -127,7 +131,36 @@ namespace ProdavnicaERP.Controllers
             }
         }
 
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ActionName("stavkaKorpe")]
+        [HttpGet("{korpaId}")]
+        public ActionResult<List<StavkaKorpeDto>> GetStavkaKorpeByKorpa(int korpaId)
+        {
+            List<StavkaKorpe> stavkeKorpe = stavkaKorpeRepository.GetStavkaKorpeByKorpa(korpaId);
+            if (stavkeKorpe == null || stavkeKorpe.Count == 0)
+            {
+                return NoContent();
+            }
+
+            List<StavkaKorpeDto> stavkeKorpeDto = new List<StavkaKorpeDto>();
+            foreach (StavkaKorpe sk in stavkeKorpe)
+            {
+                StavkaKorpeDto stavkaKorpeDto = mapper.Map<StavkaKorpeDto>(sk);
+                stavkaKorpeDto.Proizvod = mapper.Map<ProizvodDto>(proizvodRepository.GetProizvodById(sk.ProizvodId));
+                stavkaKorpeDto.Korpa = mapper.Map<KorpaDto>(korpaRepository.GetKorpaById(sk.KorpaId));
+                stavkaKorpeDto.Proizvod.Proizvodjac = mapper.Map<ProizvodjacDto>(proizvodjacRepository.GetProizvodjacById(sk.Proizvod.ProizvodjacId));
+                stavkaKorpeDto.Proizvod.TipProizvoda = mapper.Map<TipProizvodumDto>(tipProizvodaRepository.GetTipProizvodaById(sk.Proizvod.TipProizvodaId));
+                stavkaKorpeDto.Proizvod.VrstaProizvoda = mapper.Map<VrstaProizvodumDto>(vrstaProizvodaRepository.GetVrstaProizvodaById(sk.Proizvod.VrstaProizvodaId));
+
+                stavkeKorpeDto.Add(stavkaKorpeDto);
+            }
+            return Ok(stavkeKorpeDto);
+        }
+
         [HttpDelete("{stavkaKorpeID}")]
+        [ActionName("delete")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -156,6 +189,7 @@ namespace ProdavnicaERP.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ActionName("update")]
         public ActionResult<StavkaKorpeDto> UpdateStavkaKorpe(StavkaKorpeUpdateDto stavkaKorpe)
         {
 

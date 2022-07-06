@@ -7,12 +7,15 @@ namespace ProdavnicaERP.Models
 {
     public class StavkaPorudzbineDto
     {
-    
+
+        public int StavkaPorudzbineId { get; set; }
         public int KolicinaStavkePorudzbine { get; set; }
         public int VelicinaStavkePorudzbine { get; set; }
         public decimal UkupnaCenaStavkePorudzbine { get; set; }
 
         public virtual PorudzbinaDto Porudzbina { get; set; }
         public virtual ProizvodDto Proizvod { get; set; }
+
+
     }
 }

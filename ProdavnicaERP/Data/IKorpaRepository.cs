@@ -11,6 +11,7 @@ namespace ProdavnicaERP.Data
         List<Korpa> GetKorpa();
 
         Korpa GetKorpaById(int KorpaID);
+        Korpa GetKorpaByKorisnikId(int korisnikId);
 
         Korpa CreateKorpa(Korpa Korpa);
 

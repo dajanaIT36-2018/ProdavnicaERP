@@ -15,6 +15,7 @@ namespace ProdavnicaERP.Controllers
 {
     [ApiController]
     [Route("api/porudzbine")]
+    [Route("api/porudzbine/[action]")]
     [Produces("application/json", "application/xml")]
     public class PorudzbinaController : ControllerBase
     {
@@ -61,6 +62,7 @@ namespace ProdavnicaERP.Controllers
         }
 
         [HttpGet("{porudzbinaID}")]
+        [ActionName("porudzbinaById")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -78,6 +80,66 @@ namespace ProdavnicaERP.Controllers
             porudzbinaDto.Korisnik = mapper.Map<KorisnikDto>(korisnikRepository.GetKorisnikById(porudzbina.KorisnikId));
             porudzbinaDto.StatusPorudzbine = mapper.Map<StatusPorudzbineDto>(statusPorudzbineRepository.GetStatusPorudzbineById(porudzbina.StatusPorudzbineId));
             return Ok(mapper.Map<PorudzbinaDto>(porudzbina));
+        }
+
+        /// <summary>
+        /// Vraća jednu korpu na osnovu ID-ja korpe.
+        /// </summary>
+        /// <param name="korpaId">ID korpe</param>
+        /// <returns></returns>
+        /// <response code="200">Vraća traženy Korpu</response>
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ActionName("porudzbineKorisnika")]
+        [HttpGet("{korisnikId}")]
+        public ActionResult<PorudzbinaDto> GetPorudzbinaByKorisnik(int korisnikId)
+        {
+
+
+            Porudzbina porudzbina = porudzbinaRepository.GetPorudzbineByKorisnik(korisnikId);
+            if (porudzbina == null)
+            {
+
+                return NotFound();
+            }
+
+            PorudzbinaDto porudzbinaDto = mapper.Map<PorudzbinaDto>(porudzbina);
+            porudzbinaDto.Korisnik = mapper.Map<KorisnikDto>(korisnikRepository.GetKorisnikById(porudzbina.KorisnikId));
+            porudzbinaDto.StatusPorudzbine = mapper.Map<StatusPorudzbineDto>(statusPorudzbineRepository.GetStatusPorudzbineById(porudzbina.StatusPorudzbineId));
+
+            return Ok(porudzbinaDto);
+        }
+
+        /// <summary>
+        /// Vraća jednu korpu na osnovu ID-ja korpe.
+        /// </summary>
+        /// <param name="korpaId">ID korpe</param>
+        /// <returns></returns>
+        /// <response code="200">Vraća traženy Korpu</response>
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ActionName("porudzbineByStatus")]
+        [HttpGet("{statusPorudzbineId}")]
+        public ActionResult<PorudzbinaDto> GetPorudzbinaByStatus(int statusPorudzbineId)
+        {
+
+
+            Porudzbina porudzbina = porudzbinaRepository.GetPorudzbineByStatus(statusPorudzbineId);
+            if (porudzbina == null)
+            {
+
+                return NotFound();
+            }
+
+            PorudzbinaDto porudzbinaDto = mapper.Map<PorudzbinaDto>(porudzbina);
+            porudzbinaDto.Korisnik = mapper.Map<KorisnikDto>(korisnikRepository.GetKorisnikById(porudzbina.KorisnikId));
+            porudzbinaDto.StatusPorudzbine = mapper.Map<StatusPorudzbineDto>(statusPorudzbineRepository.GetStatusPorudzbineById(porudzbina.StatusPorudzbineId));
+
+            return Ok(porudzbinaDto);
         }
         [HttpPost]
         [Consumes("application/json")]

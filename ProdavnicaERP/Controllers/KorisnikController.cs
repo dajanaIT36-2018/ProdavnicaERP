@@ -60,7 +60,7 @@ namespace ProdavnicaERP.Controllers
         }
 
             [HttpGet("{korisnikID}")]
-            [Authorize(Roles = "Admin")]
+            //[Authorize(Roles = "Admin")]
             [ProducesResponseType(StatusCodes.Status404NotFound)]
             [ProducesResponseType(StatusCodes.Status200OK)]
             [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -165,6 +165,33 @@ namespace ProdavnicaERP.Controllers
             }
 
 
+        }
+        /// <summary>
+        /// Vraća jedan korisnik na osnovu ID-ja korisnika.
+        /// </summary>
+        /// <param name="korisnickoIme"> Korisnicko ime</param>
+        ///  /// <param name="lozinka">Lozinka</param>
+        /// <returns></returns>
+        /// <response code="200">Vraća tražen korisnik</response>
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [HttpGet("{korisnickoIme},{lozinka}")]
+        // [Authorize(Roles = "Admin")]
+        public ActionResult<KorisnikDto> GetKorisnikByUserNamePass(string korisnickoIme, string lozinka)
+        {
+
+
+            Korisnik korisnik = korisnikRepository.GetKorisnikByUserNameAndPassword(korisnickoIme, lozinka);
+            if (korisnik == null)
+            {
+                return NotFound();
+            }
+
+            KorisnikDto korisnikDto = mapper.Map<KorisnikDto>(korisnik);
+            korisnikDto.TipKorisnika = mapper.Map<TipKorisnikaDto>(tipKorisnikaRepository.GetTipKorisnikaById(korisnik.TipKorisnikaId));
+            return Ok(korisnikDto);
         }
         [HttpOptions]
             public IActionResult GetSluzbeniListOptions()

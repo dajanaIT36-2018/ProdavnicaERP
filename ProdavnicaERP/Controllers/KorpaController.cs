@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 namespace ProdavnicaERP.Controllers
 {
     [ApiController]
+    [Route("api/korpe/[action]")]
     [Route("api/korpe")]
     [Produces("application/json", "application/xml")]
     public class KorpaController : ControllerBase
@@ -34,7 +35,7 @@ namespace ProdavnicaERP.Controllers
 
         [HttpGet]
         [HttpHead]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -60,6 +61,7 @@ namespace ProdavnicaERP.Controllers
         }
 
         [HttpGet("{korpaID}")]
+        [ActionName("korpabyId")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -77,11 +79,42 @@ namespace ProdavnicaERP.Controllers
             korpaDto.Korisnik= mapper.Map<KorisnikKorpaDto>(korisnikRepository.GetKorisnikById(korpa.KorisnikId));
             return Ok(mapper.Map<KorpaDto>(korpa));
         }
+
+        /// <summary>
+        /// Vraća jednu korpu na osnovu ID-ja korpe.
+        /// </summary>
+        /// <param name="korpaId">ID korpe</param>
+        /// <returns></returns>
+        /// <response code="200">Vraća traženy Korpu</response>
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ActionName("korpeKorisnika")]
+        [HttpGet("{korisnikId}")]
+        public ActionResult<KorpaDto> GetKorpaByKorisnikId(int korisnikId)
+        {
+
+
+            Korpa korpa = korpaRepository.GetKorpaByKorisnikId(korisnikId);
+            if (korpa == null)
+            {
+
+                return NotFound();
+            }
+
+            KorpaDto korpaDto = mapper.Map<KorpaDto>(korpa);
+            korpaDto.Korisnik = mapper.Map<KorisnikKorpaDto>(korisnikRepository.GetKorisnikById(korpa.KorisnikId));
+
+            return Ok(korpaDto);
+        }
         [HttpPost]
+        [ActionName("create")]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+
         public ActionResult<KorpaDto> CreateKorpa([FromBody] KorpaCreationDto korpa)
         {
             try
@@ -106,6 +139,7 @@ namespace ProdavnicaERP.Controllers
         }
 
         [HttpDelete("{korpaID}")]
+        [ActionName("delete")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -129,6 +163,7 @@ namespace ProdavnicaERP.Controllers
             }
         }
         [HttpPut]
+        [ActionName("update")]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]

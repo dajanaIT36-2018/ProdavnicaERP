@@ -30,7 +30,10 @@ namespace ProdavnicaERP.Data
         {
             return context.Korpas.FirstOrDefault(k => k.KorpaId == KorpaID);
         }
-
+        public Korpa GetKorpaByKorisnikId(int korisnikId)
+        {
+            return context.Korpas.FirstOrDefault(k => k.KorisnikId == korisnikId);
+        }
         public Korpa CreateKorpa(Korpa Korpa)
         {
             context.Korpas.Add(Korpa);

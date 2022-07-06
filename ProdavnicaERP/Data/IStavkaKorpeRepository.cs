@@ -11,6 +11,7 @@ namespace ProdavnicaERP.Data
         List<StavkaKorpe> GetStavkaKorpe();
 
         StavkaKorpe GetStavkaKorpeById(int StavkaKorpeID);
+        List<StavkaKorpe> GetStavkaKorpeByKorpa(int korpaId);
 
         StavkaKorpe CreateStavkaKorpe(StavkaKorpe StavkaKorpe);
 

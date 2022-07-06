@@ -15,6 +15,7 @@ namespace ProdavnicaERP.Controllers
 {
     [ApiController]
     [Route("api/stavkePorudzbine")]
+    [Route("api/stavkePorudzbine/[action]")]
     [Produces("application/json", "application/xml")]
     public class StavkaPorudzbineController : ControllerBase
     {
@@ -24,11 +25,13 @@ namespace ProdavnicaERP.Controllers
         private readonly IKorisnikRepository korisnikRepository;
         private readonly IStatusPorudzbineRepository statusPorudzbineRepository;
         private readonly ITipKorisnikaRepository tipKorisnikaRepository;
+        private readonly IProizvodjacRepository proizvodjacRepository;
         private readonly IMapper mapper;
         private readonly LinkGenerator linkGenerator;
         public StavkaPorudzbineController(IStavkaPorudzbineRepository stavkaPorudzbineRepository,
             IProizvodRepository proizvodRepository, IPorudzbinaRepository porudzbinaRepository, IKorisnikRepository korisnikRepository,
             IStatusPorudzbineRepository statusPorudzbineRepository, ITipKorisnikaRepository tipKorisnikaRepository,
+            IProizvodjacRepository proizvodjacRepository,
             IMapper mapper, LinkGenerator linkGenerator)
         {
             this.stavkaPorudzbineRepository = stavkaPorudzbineRepository;
@@ -39,6 +42,7 @@ namespace ProdavnicaERP.Controllers
             this.korisnikRepository = korisnikRepository;
             this.statusPorudzbineRepository = statusPorudzbineRepository;
             this.tipKorisnikaRepository = tipKorisnikaRepository;
+            this.proizvodjacRepository = proizvodjacRepository;
         }
 
         [HttpGet]
@@ -63,7 +67,8 @@ namespace ProdavnicaERP.Controllers
                 stavkaPorudzbineDto.Proizvod = mapper.Map<ProizvodDto>(proizvodRepository.GetProizvodById(k.ProizvodId));
                 stavkaPorudzbineDto.Porudzbina = mapper.Map<PorudzbinaDto>(porudzbinaRepository.GetPorudzbinaById(k.PorudzbinaId));
                 stavkaPorudzbineDto.Porudzbina.Korisnik = mapper.Map<KorisnikDto>(korisnikRepository.GetKorisnikById(k.Porudzbina.KorisnikId));
- 
+                stavkaPorudzbineDto.Proizvod.Proizvodjac = mapper.Map<ProizvodjacDto>(proizvodjacRepository.GetProizvodjacById(k.Proizvod.ProizvodjacId));
+
                 stavkaPorudzbineDto.Porudzbina.StatusPorudzbine = mapper.Map<StatusPorudzbineDto>(statusPorudzbineRepository.GetStatusPorudzbineById(k.Porudzbina.StatusPorudzbineId));
                 stavkaPorudzbiniDto.Add(stavkaPorudzbineDto);
             }
@@ -71,6 +76,7 @@ namespace ProdavnicaERP.Controllers
         }
 
         [HttpGet("{stavkaPorudzbineID}")]
+        [ActionName("stavkaById")]
         //[Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -93,8 +99,38 @@ namespace ProdavnicaERP.Controllers
             stavkaPorudzbineDto.Porudzbina.StatusPorudzbine = mapper.Map<StatusPorudzbineDto>(statusPorudzbineRepository.GetStatusPorudzbineById(stavkaPorudzbine.Porudzbina.StatusPorudzbineId));
             return Ok(mapper.Map<StavkaPorudzbineDto>(stavkaPorudzbine));
         }
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ActionName("stavkaPorudzbine")]
+        [HttpGet("{porudzbinaId}")]
+        public ActionResult<List<StavkaPorudzbineDto>> GetStavkaPorudzbineByPorudzbina(int porudzbinaId)
+        {
+            List<StavkaPorudzbine> stavkePorudzbine = stavkaPorudzbineRepository.GetStavkaPorudzbineByPorudzbina(porudzbinaId);
+            if (stavkePorudzbine == null || stavkePorudzbine.Count == 0)
+            {
+                return NoContent();
+            }
+
+            List<StavkaPorudzbineDto> stavkePorudzbineDto = new List<StavkaPorudzbineDto>();
+            foreach (StavkaPorudzbine sk in stavkePorudzbine)
+            {
+                StavkaPorudzbineDto stavkaPorudzbineDto = mapper.Map<StavkaPorudzbineDto>(sk);
+                stavkaPorudzbineDto.Proizvod = mapper.Map<ProizvodDto>(proizvodRepository.GetProizvodById(sk.ProizvodId));
+                stavkaPorudzbineDto.Proizvod = mapper.Map<ProizvodDto>(proizvodRepository.GetProizvodById(sk.ProizvodId));
+                stavkaPorudzbineDto.Porudzbina = mapper.Map<PorudzbinaDto>(porudzbinaRepository.GetPorudzbinaById(sk.PorudzbinaId));
+                stavkaPorudzbineDto.Porudzbina.Korisnik = mapper.Map<KorisnikDto>(korisnikRepository.GetKorisnikById(sk.Porudzbina.KorisnikId));
+                stavkaPorudzbineDto.Porudzbina.Korisnik.TipKorisnika = mapper.Map<TipKorisnikaDto>(tipKorisnikaRepository.GetTipKorisnikaById(sk.Porudzbina.Korisnik.TipKorisnikaId));
+                stavkaPorudzbineDto.Porudzbina.StatusPorudzbine = mapper.Map<StatusPorudzbineDto>(statusPorudzbineRepository.GetStatusPorudzbineById(sk.Porudzbina.StatusPorudzbineId));
+
+                stavkePorudzbineDto.Add(stavkaPorudzbineDto);
+            }
+            return Ok(stavkePorudzbineDto);
+        }
+
         [HttpPost]
         [Consumes("application/json")]
+        [ActionName("create")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -123,6 +159,7 @@ namespace ProdavnicaERP.Controllers
         }
 
         [HttpDelete("{stavkaPorudzbineID}")]
+        [ActionName("delete")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -147,6 +184,7 @@ namespace ProdavnicaERP.Controllers
         }
         [HttpPut]
         [Consumes("application/json")]
+        [ActionName("update")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

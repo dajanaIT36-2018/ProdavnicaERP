@@ -14,6 +14,9 @@ namespace ProdavnicaERP.Data
 
         Porudzbina CreatePorudzbina(Porudzbina Porudzbina);
 
+        Porudzbina GetPorudzbineByKorisnik(int korisnikId);
+
+        Porudzbina GetPorudzbineByStatus(int korisnikId);
         void UpdatePorudzbina(Porudzbina Porudzbina);
 
         void DeletePorudzbina(int PorudzbinaID);

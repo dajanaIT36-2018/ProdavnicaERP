@@ -31,6 +31,17 @@ namespace ProdavnicaERP.Data
             return context.Porudzbinas.FirstOrDefault(k => k.PorudzbinaId == PorudzbinaID);
         }
 
+        public Porudzbina GetPorudzbineByKorisnik(int korisnikId)
+        {
+            return context.Porudzbinas.FirstOrDefault(k => k.KorisnikId == korisnikId);
+        }
+
+        public Porudzbina GetPorudzbineByStatus(int statusPorudzbineId)
+        {
+            return context.Porudzbinas.FirstOrDefault(k => k.StatusPorudzbineId == statusPorudzbineId);
+        }
+
+
         public Porudzbina CreatePorudzbina(Porudzbina Porudzbina)
         {
             context.Porudzbinas.Add(Porudzbina);

@@ -31,6 +31,12 @@ namespace ProdavnicaERP.Data
             return context.StavkaKorpes.FirstOrDefault(k => k.StavkaKorpeId == StavkaKorpeID);
         }
 
+        public List<StavkaKorpe> GetStavkaKorpeByKorpa(int korpaId)
+        {
+            return (from s in context.StavkaKorpes select s).Where(s => s.KorpaId == korpaId).ToList();
+
+        }
+
         public StavkaKorpe CreateStavkaKorpe(StavkaKorpe StavkaKorpe)
         {
             context.StavkaKorpes.Add(StavkaKorpe);

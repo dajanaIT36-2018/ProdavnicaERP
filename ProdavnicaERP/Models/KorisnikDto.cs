@@ -7,6 +7,7 @@ namespace ProdavnicaERP.Models
 {
     public class KorisnikDto
     {
+        public int KorisnikId { get; set; }
         public string ImeKorisnik { get; set; }
         public string PrezimeKorisnika { get; set; }
         public int? TelefonKorisnika { get; set; }

@@ -75,14 +75,14 @@ namespace ProdavnicaERP.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public ActionResult<TipKorisnikaDto> CreateTipProizvoda([FromBody] TipProizvodumDto tipProizvoda)
+        public ActionResult<TipKorisnikaDto> CreateTipProizvoda([FromBody] TipProizvodumCreationDto tipProizvoda)
         {
             try
             {
                 TipProizvodum obj = mapper.Map<TipProizvodum>(tipProizvoda);
                 TipProizvodum k = tipProizvodaRepository.CreateTipProizvoda(obj);
                 tipProizvodaRepository.SaveChanges();
-                string location = linkGenerator.GetPathByAction("GetTipProizvoda", "TipProizvodum", new { TipKorisnikaID = k.TipProizvodaId});
+                string location = linkGenerator.GetPathByAction("GetTipProizvoda", "TipProizvodum", new { TipKorisnikaID = k.TipProizvodaId });
 
 
                 return Created(location, mapper.Map<TipProizvodumDto>(k));

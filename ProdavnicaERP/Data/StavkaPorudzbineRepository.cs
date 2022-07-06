@@ -36,7 +36,11 @@ namespace ProdavnicaERP.Data
             context.StavkaPorudzbines.Add(StavkaPorudzbine);
             return StavkaPorudzbine;
         }
+        public List<StavkaPorudzbine> GetStavkaPorudzbineByPorudzbina(int porudzbinaId)
+        {
+            return (from s in context.StavkaPorudzbines select s).Where(s => s.PorudzbinaId == porudzbinaId).ToList();
 
+        }
         public void UpdateStavkaPorudzbine(StavkaPorudzbine StavkaPorudzbine)
         {
             throw new NotImplementedException();

@@ -9,6 +9,7 @@ namespace ProdavnicaERP.Data
     public interface IStavkaPorudzbineRepository
     {
         List<StavkaPorudzbine> GetStavkaPorudzbine();
+        List<StavkaPorudzbine> GetStavkaPorudzbineByPorudzbina(int porudzbinaId);
 
         StavkaPorudzbine GetStavkaPorudzbineById(int StavkaPorudzbineID);
 
